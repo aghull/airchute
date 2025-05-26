@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dawa6sil58u2v"]
+
+[ext_resource type="Script" uid="uid://umi0nfpd7y87" path="res://bullet.gd" id="1_v8qja"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_v7oki"]
+load_path = "res://.godot/imported/starburst-silhouette.svg-1a78d25e213f9c8381c4d75fa1b90c14.ctex"
+
+[node name="Bullet" type="Area2D"]
+script = ExtResource("1_v8qja")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-60, -60, -60, 60, 60, 60, 60, -60)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.05, 0.05)
+texture = SubResource("CompressedTexture2D_v7oki")

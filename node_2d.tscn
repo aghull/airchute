@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://6vtv5ae0goqa"]
+
+[ext_resource type="Script" uid="uid://bi7ldujwlx5k1" path="res://glider.gd" id="1_wtcfe"]
+[ext_resource type="Texture2D" uid="uid://c7gymnruo5doq" path="res://icon.svg" id="2_0e48y"]
+
+[node name="World" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -3294.0
+offset_top = -2253.0
+offset_right = 4229.0
+offset_bottom = 2418.0
+texture = ExtResource("2_0e48y")
+stretch_mode = 1
+
+[node name="Glider" type="Node2D" parent="."]
+position = Vector2(400, 400)
+scale = Vector2(0.05, 0.05)
+script = ExtResource("1_wtcfe")
+
+[node name="Wind" type="Polygon2D" parent="Glider"]
+scale = Vector2(1, 1)
+color = Color(0.0745098, 1, 1, 1)
+polygon = PackedVector2Array(0, 0, 800, -40, 1060, 20, 800, 60)
+
+[node name="Area" type="Area2D" parent="Glider"]
+position = Vector2(600, 340)
+
+[node name="Collision" type="CollisionPolygon2D" parent="Glider/Area"]
+position = Vector2(-935.8, -645.6)
+polygon = PackedVector2Array(132, 311, 248, 207, 1126, 329, 258, 415)
+
+[node name="Polygon2D" type="Polygon2D" parent="Glider/Area"]
+position = Vector2(-2119.8, -1451.6)
+polygon = PackedVector2Array(1316, 1117, 1434, 1003, 2280, 1127, 1440, 1221)
+
+[node name="Camera2D" type="Camera2D" parent="Glider"]
