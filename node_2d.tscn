@@ -34,3 +34,8 @@ position = Vector2(-2119.8, -1451.6)
 polygon = PackedVector2Array(1316, 1117, 1434, 1003, 2280, 1127, 1440, 1221)
 
 [node name="Camera2D" type="Camera2D" parent="Glider"]
+
+[node name="Flame" type="Polygon2D" parent="Glider"]
+position = Vector2(-200, -0.000244141)
+color = Color(1, 0, 0, 0.509804)
+polygon = PackedVector2Array(0, 0, -62.0387, -31.297, -210, 0.0800018, -63.1989, 27.5864)
