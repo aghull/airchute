@@ -1,27 +1,28 @@
 extends Node2D
 
-var vel: Vector2 = Vector2.RIGHT * 2
 const thrust: float = 0.08
 const max_speed = 5
 const yaw_speed = 0.05
 const wind_drag = .01
 const drag = .005
 const stall_thresh = 0.2
-var turbo_factor = 1
 const gravity = 0.15
-var firing = false
-var bullets = []
-var fireCooldown = 0
 const cooldownLength = 0.3
 const bullet_speed = 20
 const max_bullets = 15
-var shake = 20
 const wind_shake_thresh = 2
 const wind_shake_factor = .5
 const max_shake = 6
 const camera_lead = 40
 const camera_max_lead = 200
 
+var vel: Vector2 = Vector2.RIGHT * 2
+var turbo_factor = 1
+var firing = false
+var bullets = []
+var fireCooldown = 0
+var shake = 20
+var camera_zoom = Vector2.ONE
 var Bullet = preload("res://bullet.tscn")
 
 func _process(delta: float) -> void:
@@ -84,7 +85,9 @@ func _process(delta: float) -> void:
 		shake = min(max_shake, (wind.length() - wind_shake_thresh) * wind_shake_factor)
 	
 	$Camera2D.offset = (vel * camera_lead).limit_length(camera_max_lead)
-	$Camera2D.zoom = (Vector2.ONE * clamp(10 / vel.length(), 0.75, 3))
+	var target_zoom = (Vector2.ONE * clamp(10 / vel.length(), 0.75, 3))
+	$Camera2D.zoom += (target_zoom - $Camera2D.zoom).clampf(-0.005, 0.005)
+	
 	if shake > 0:
 		$Camera2D.offset += Vector2(randf() * shake, randf() * shake)
 		rotation += .01 * (randf() - 0.5) * shake
