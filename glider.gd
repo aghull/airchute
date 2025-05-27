@@ -28,6 +28,8 @@ var shake = 20
 var camera_zoom = Vector2.ONE
 var Bullet = preload("res://bullet.tscn")
 
+@onready var screen_size = get_viewport_rect().size
+
 func _process(delta: float) -> void:
 
 	fire_countdown -= delta
@@ -92,6 +94,8 @@ func _process(delta: float) -> void:
 		vel *= (1 - drag)
 
 	position += vel * delta * 60
+	position.x = wrapf(position.x, 0, screen_size.x)
+	position.y = wrapf(position.y, 0, screen_size.y)
 
 	$Flame.scale += (Vector2.ONE * pow(thrust_factor, 0.8) * 3 - $Flame.scale).clampf(-0.5, 0.5)
 
