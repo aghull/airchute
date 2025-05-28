@@ -1,10 +1,10 @@
 extends Node2D
 
-const thrust: float = 0.08
+const thrust: float = 0.07
 const turbo_cooldown = 0.3
 const max_speed = 5
 const pitch_speed = 0.03
-const wind_drag = .01
+const wind_drag = .005
 const drag = .005
 const stall_thresh = 0.2
 const gravity = 0.15
@@ -27,6 +27,7 @@ var fire_countdown = 0
 var shake = 20
 var camera_zoom = Vector2.ONE
 var Bullet = preload("res://bullet.tscn")
+var wind = Vector2.ZERO
 
 @onready var screen_size = get_viewport_rect().size
 
@@ -49,6 +50,7 @@ func _process(delta: float) -> void:
 	else:
 		thrust_factor = 1
 		pitch_factor = 1
+	
 	if Input.is_action_pressed("ui_right"):
 		rotation += pitch_speed * pitch_factor
 	if Input.is_action_pressed("ui_left"):
@@ -70,7 +72,7 @@ func _process(delta: float) -> void:
 	
 	var wind_angle = fposmod(rotation - dir,  PI * 2)
 
-	var wind = (
+	wind = (
 		Vector2.from_angle(rotation + PI / 2) *
 		sin(wind_angle) * 2 * vel.length()
 	)
@@ -83,11 +85,11 @@ func _process(delta: float) -> void:
 	var effectiveness = cos(wind_angle) * abs(cos(rotation))
 	if effectiveness < stall_thresh:
 		vel += Vector2.DOWN * gravity
-	elif effectiveness < stall_thresh * 2:
+	elif effectiveness < stall_thresh * 1.8:
 		vel += Vector2.DOWN * gravity * (stall_thresh * 2 - effectiveness) / stall_thresh
 	else:
-		vel += Vector2.DOWN * gravity * 0.1
-		
+		vel += Vector2.DOWN * gravity * max(0.1, 0.6 / vel.length())
+
 	# drag at terminal speeds
 	var speed = vel.length()
 	if speed > max_speed * thrust_factor:
