@@ -1,7 +1,9 @@
 extends Node2D
 
 const thrust: float = 0.07
-const turbo_cooldown = 0.3
+const turbo_ignition_time = .5
+const turbo_cooldown = 3
+const min_turbo_duration = 3
 const max_speed = 5
 const pitch_speed = 0.03
 const wind_drag = .005
@@ -16,10 +18,12 @@ const wind_shake_factor = .5
 const max_shake = 6
 const camera_lead = 40
 const camera_max_lead = 200
+const camera_speed = 0.05
 
 var vel: Vector2 = Vector2.RIGHT * 2
 var thrust_factor = 1
-var turbo_countdown = 0
+var turbo_burn_countdown = 0
+var turbo_idle_countdown = turbo_cooldown
 var pitch_factor = 1
 var firing = false
 var bullets = []
@@ -34,23 +38,26 @@ var wind = Vector2.ZERO
 func _process(delta: float) -> void:
 
 	fire_countdown -= delta
-	turbo_countdown -= delta
+	turbo_idle_countdown -= delta
 
-	if Input.is_action_just_pressed("turbo"):
-		turbo_countdown = turbo_cooldown
-	elif Input.is_action_pressed("turbo"):
-		if turbo_countdown <= 0:
-			if turbo_countdown + delta > 0:
+	if (Input.is_action_pressed("turbo") or turbo_burn_countdown > 0) and turbo_idle_countdown <= 0:
+		if thrust_factor == 1:
+			turbo_burn_countdown = min_turbo_duration
+		turbo_burn_countdown -= delta
+		if turbo_burn_countdown <= min_turbo_duration - turbo_ignition_time:
+			if turbo_burn_countdown + delta > min_turbo_duration - turbo_ignition_time:
 				vel *= 0.5 # kill momentum as turbo kicks in
 			thrust_factor = 5
 			pitch_factor = 0.2
 		else:
 			thrust_factor = 0
 			pitch_factor = 0
-	else:
+	elif thrust_factor > 1:
 		thrust_factor = 1
 		pitch_factor = 1
-	
+		turbo_idle_countdown = turbo_cooldown
+
+
 	if Input.is_action_pressed("ui_right"):
 		rotation += pitch_speed * pitch_factor
 	if Input.is_action_pressed("ui_left"):
@@ -108,7 +115,7 @@ func _process(delta: float) -> void:
 
 	$Camera2D.offset = (vel * camera_lead).limit_length(camera_max_lead)
 	var target_zoom = (Vector2.ONE * clamp(10 / vel.length(), 0.75, 3))
-	$Camera2D.zoom += (target_zoom - $Camera2D.zoom).clampf(-0.005, 0.005)
+	$Camera2D.zoom += (target_zoom - $Camera2D.zoom).clampf(-camera_speed, camera_speed)
 
 	if shake > 0:
 		$Camera2D.offset += Vector2(randf() * shake, randf() * shake)
